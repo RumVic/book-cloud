@@ -5,10 +5,7 @@ import com.vicrum.books.gradleGroovy.java21.service.api.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,11 +41,16 @@ public class ImageController {
     @GetMapping("{id}")
     public ResponseEntity<InputStreamResource> downloadBookImage(@PathVariable String id) throws IOException {
         GridFsResource resource = imageService.retrieveFile(id);
+
         String filename = URLEncoder.encode(Objects.requireNonNull(resource.getFilename()), StandardCharsets.UTF_8).replaceAll("\\+", "%20");
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(resource.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + filename)
-                .body(new InputStreamResource(resource.getInputStream()));
+                .header( ContentDisposition
+                        .attachment()
+                        .filename("image", StandardCharsets.UTF_8)
+                        .build()
+                        .toString())
+                        .body(new InputStreamResource(resource.getInputStream()));
     }
 }
 

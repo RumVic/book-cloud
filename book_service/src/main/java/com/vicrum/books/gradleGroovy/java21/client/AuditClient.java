@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name="book-audit")
+@FeignClient(name="book-audit",fallback = AuditFallBackImplementation.class)
 public interface AuditClient {
-
 
         @RequestMapping(method = RequestMethod.POST, value = "/audit/creation/{bookName}", params = "action",consumes = MediaType.APPLICATION_JSON_VALUE)
         void storeCreateRecord(@PathVariable("bookName") String bookName, @RequestParam("action") RecordAction action, @RequestBody Book book);

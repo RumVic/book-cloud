@@ -34,9 +34,7 @@ public class BookController {
 
 
     @GetMapping()
-
     public ResponseEntity<List<BookOutputDTO>> getBooks() throws IOException {
-        //readingListCircuitBreaker.run()
         return new ResponseEntity<>(iBookMapper.listEntityTolistDTO(bookService.read()), HttpStatus.OK);
     }
 
